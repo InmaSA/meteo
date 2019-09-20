@@ -128,11 +128,11 @@ router.get('/', (req, res) => {
   let rightPairPowerValue = jsonData.power.values.filter(elm => elm.time === timeString)
 
   // comprobamos si el valor para ese timeString existe para asignar valores por defecto o el que procede del data.yml a dKTempValue y mWPowerValue
-  if (rightPairTempValue !== []) {
+  if (rightPairTempValue.length >= 1) {
     dKTempValue = rightPairTempValue[0].value
   }  else {dKTempValue = 2731.5}
   
-  if (rightPairPowerValue !== []) {
+  if (rightPairPowerValue.length >= 1) {
     mWPowerValue = rightPairPowerValue[0].value
   }  else {mWPowerValue = '0'}
 

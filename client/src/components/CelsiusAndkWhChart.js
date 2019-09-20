@@ -1,9 +1,30 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import {Bar} from 'react-chartjs-2'
+
+// enviamos el estado del store al componente, que llega como props
+const mapStateToProps = state => {
+  return(
+    {serverValues: state.serverValues}
+  )
+}
+
+// función que llamaremos dentro del componente antes del return para manipular el array de serVervalues que llega por props y que pasaremos como parámetro
+const findValues = state => {
+  let myState = [...state]
+  if(state.length >= 120) {
+    myState.splice(0, myState.length-121)
+  } 
+  return myState
+}
+
 
 
 function CelsiusAndkWhChart (props) {
 
+  // llmamamos a findValues y le pasamos como parámetro el estado del store y posteriormente filtramos los elementos del array que necesitamos
+  let arrValues = findValues(props.serverValues)
+  let celsiusAndkWhvalues = arrValues.filter(elm => elm.celsiusValueTemp)
 
   return (
 
@@ -12,7 +33,7 @@ function CelsiusAndkWhChart (props) {
           datasets: [{
               label: 'Temperature (ºC)',
               type:'line',
-              data: props.chartValues.filter(elm => elm.celsiusValueTemp).map((elm => elm.celsiusValueTemp)),
+              data: celsiusAndkWhvalues.map((elm => elm.celsiusValueTemp)),
               fill: false,
               borderColor: '#FA8706 ',
               backgroundColor: '#FA8706 ',
@@ -20,7 +41,7 @@ function CelsiusAndkWhChart (props) {
             },{
               type: 'bar',
               label: 'Energy (KWh)',
-              data: props.chartValues.filter(elm => elm.kwHEnergy).map((elm => elm.kwHEnergy)),
+              data: celsiusAndkWhvalues.map((elm => elm.kwHEnergy)),
               fill: false,
               backgroundColor: '#616CDE',
               borderColor: '#616CDE',
@@ -44,7 +65,7 @@ function CelsiusAndkWhChart (props) {
                 gridLines: {
                   display: false
                 },
-                labels: props.chartValues.filter(elm => elm.timeMinuteValue).map((elm => elm.timeMinuteValue))
+                labels: celsiusAndkWhvalues.map((elm => elm.timeMinuteValue))
               }
             ],
             yAxes: [
@@ -81,6 +102,9 @@ function CelsiusAndkWhChart (props) {
 
 }
 
-export default CelsiusAndkWhChart
+
+export default connect(
+  mapStateToProps,
+) (CelsiusAndkWhChart)
 
 

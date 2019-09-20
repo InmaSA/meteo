@@ -1,9 +1,28 @@
 import React from 'react'
+import {connect} from 'react-redux'
 import {Bar} from 'react-chartjs-2'
+
+// enviamos el estado del store al componente, que llega como props
+const mapStateToProps = state => {
+  return(
+    {serverValues: state.serverValues}
+  )
+}
+
+// función que llamaremos dentro del componente antes del return para manipular el array de serVervalues que llega por props y que pasaremos como parámetro
+const findValues = state => {
+  let myState = [...state]
+  if(state.length >= 30) {
+    myState.splice(0, myState.length-31)
+  } 
+  return myState
+}
 
 
 function FiveSecondsChart(props) {
 
+// llmamamos a findValues y le pasamos como parámetro el estado del store y posteriormente mapeamos el array de serverValues para pasar la info a cada eje
+let arrValues = findValues(props.serverValues)
 
   return (
 
@@ -12,7 +31,7 @@ function FiveSecondsChart(props) {
           datasets: [{
               label: 'Temperature (dK)',
               type:'line',
-              data: props.chartValues.map(elm => elm.dKTempValue),
+              data: arrValues.map(elm => elm.dKTempValue),
               fill: false,
               borderColor: '#FA8706',
               backgroundColor: '#FA8706',
@@ -20,7 +39,7 @@ function FiveSecondsChart(props) {
             },{
               type: 'bar',
               label: 'Power (MW)',
-              data: props.chartValues.map(elm => elm.mWPowerValue),
+              data: arrValues.map(elm => elm.mWPowerValue),
               fill: false,
               backgroundColor: '#616CDE',
               borderColor: '#616CDE',
@@ -44,7 +63,7 @@ function FiveSecondsChart(props) {
                 gridLines: {
                   display: false
                 },
-                labels: props.chartValues.map(elm => elm.timeValue)
+                labels: arrValues.map(elm => elm.timeValue)
               }
             ],
             yAxes: [
@@ -81,6 +100,9 @@ function FiveSecondsChart(props) {
 
 }
 
-export default FiveSecondsChart
+export default connect(
+  mapStateToProps,
+) (FiveSecondsChart)
+
 
 
